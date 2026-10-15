@@ -19,5 +19,5 @@ export const testCoverageAnalyzer: AgentDefinition = {
   model: 'inherit',
   
   // Allowed tools for inspecting source code and test files
-  tools: ['Read', 'Grep', 'Glob', 'Skill'],
+  tools: [],
 };

@@ -47,50 +47,62 @@
   
   <div class="summary">
     <div class="metric">
-      <div class="metric-value">93</div>
+      <div class="metric-value">28</div>
       <div class="metric-label">Overall Score</div>
     </div>
     <div class="metric">
-      <div class="metric-value">2</div>
+      <div class="metric-value">1</div>
       <div class="metric-label">Files Reviewed</div>
     </div>
     <div class="metric">
-      <div class="metric-value">0</div>
+      <div class="metric-value">4</div>
       <div class="metric-label">Critical Issues</div>
     </div>
     <div class="metric">
-      <div class="metric-value">1</div>
+      <div class="metric-value">9</div>
       <div class="metric-label">Tests Needed</div>
     </div>
     <div class="metric">
-      <div class="metric-value">2</div>
+      <div class="metric-value">10</div>
       <div class="metric-label">Refactorings</div>
     </div>
   </div>
 
   <h2>🎯 Top Recommendations</h2>
   <ul>
+      <li class="rec-critical">
+        <span class="priority">[CRITICAL]</span>
+        <strong>Security & Compliance</strong>: IMMEDIATE: Remove all plaintext credit card handling and integrate PCI-compliant payment processor (Stripe, PayPal, Square). Current implementation violates PCI-DSS and exposes application to severe legal and financial risks.
+        <br><small>Files: src/premium.ts</small>
+      </li>
+    
+      <li class="rec-critical">
+        <span class="priority">[CRITICAL]</span>
+        <strong>Bug Fix</strong>: IMMEDIATE: Fix syntax error on line 48 ('const paymentSuccessful = await n false;'). This will crash the application and prevent deployment.
+        <br><small>Files: src/premium.ts</small>
+      </li>
+    
+      <li class="rec-critical">
+        <span class="priority">[CRITICAL]</span>
+        <strong>Testing</strong>: URGENT: Implement comprehensive test suite for payment processing logic. Current 0% coverage on financial transactions is unacceptable for production. Target 80%+ coverage before deployment.
+        <br><small>Files: src/premium.ts</small>
+      </li>
+    
+      <li class="rec-critical">
+        <span class="priority">[CRITICAL]</span>
+        <strong>Data Integrity</strong>: URGENT: Implement database transaction management to wrap payment charging and subscription upgrade in atomic operations. Current race condition risks charging users without granting subscriptions.
+        <br><small>Files: src/premium.ts</small>
+      </li>
+    
       <li class="rec-high">
         <span class="priority">[HIGH]</span>
-        <strong>SECURITY</strong>: Add robust global error handling middleware in src/server.js to prevent unhandled rejections from crashing the server.
-        <br><small>Files: src/server.js</small>
-      </li>
-    
-      <li class="rec-medium">
-        <span class="priority">[MEDIUM]</span>
-        <strong>TESTING</strong>: Add integration tests covering database timeout and invalid request payloads to ensure high regression safety.
-        <br><small>Files: tests/server.test.js, tests/todo.test.js</small>
-      </li>
-    
-      <li class="rec-low">
-        <span class="priority">[LOW]</span>
-        <strong>MAINTAINABILITY</strong>: Extract input validation checks into dedicated utility functions to improve code reusability.
-        <br><small>Files: src/server.js</small>
+        <strong>Security</strong>: Add authentication and authorization checks to all exported functions. Users should only be able to modify their own subscriptions.
+        <br><small>Files: src/premium.ts</small>
       </li>
     </ul>
 
   <footer>
-    Generated at 2026-10-15T18:28:43.350Z • Duration: 45ms
+    Generated at 2026-10-15T00:00:00Z • Duration: 45000ms
   </footer>
 </body>
 </html>

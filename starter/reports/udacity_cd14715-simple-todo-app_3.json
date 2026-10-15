@@ -2,218 +2,499 @@
   "pullRequest": {
     "owner": "udacity",
     "repo": "cd14715-simple-todo-app",
-    "number": 3,
-    "title": "Pull Request #3: Enterprise Enhancements & Fixes for cd14715-simple-todo-app"
+    "number": 3
   },
-  "metadata": {
-    "owner": "udacity",
-    "repo": "cd14715-simple-todo-app",
-    "prNumber": 3,
-    "timestamp": "2026-10-15T18:28:43.350Z",
-    "analyzedAt": "2026-10-15T18:28:43.350Z",
-    "durationMs": 45004,
-    "duration": 45,
-    "modelUsed": "claude-sonnet-4-5-20250929",
-    "agentVersions": {
-      "codeQualityAnalyzer": "1.0.0",
-      "testCoverageAnalyzer": "1.0.0",
-      "refactoringSuggester": "1.0.0"
+  "fileReviews": [
+    {
+      "file": "src/premium.ts",
+      "codeQuality": {
+        "file": "src/premium.ts",
+        "issues": [
+          {
+            "line": 18,
+            "severity": "critical",
+            "category": "security",
+            "description": "Plaintext credit card storage - PaymentDetails interface handles raw credit card numbers, CVV, and expiry dates, violating PCI-DSS compliance",
+            "suggestion": "Never handle raw card data. Use a PCI-compliant payment processor like Stripe, PayPal, or Square. Replace PaymentDetails with a payment token/method ID from the processor."
+          },
+          {
+            "line": 48,
+            "severity": "critical",
+            "category": "bug-risk",
+            "description": "Syntax error - incomplete code: 'const paymentSuccessful = await n false;' will crash the application",
+            "suggestion": "Complete the line: const paymentSuccessful = await chargeCard(payment, amount);"
+          },
+          {
+            "line": 129,
+            "severity": "critical",
+            "category": "security",
+            "description": "SQL Injection vulnerability - userId parameter lacks validation, and JSON.stringify(features) could be exploited if features array is manipulated",
+            "suggestion": "Add UUID validation for userId and whitelist validation for feature names. Use parameterized queries with proper input sanitization."
+          },
+          {
+            "line": 134,
+            "severity": "critical",
+            "category": "security",
+            "description": "Sensitive data logging - console.error may log payment information to application logs, violating PCI-DSS",
+            "suggestion": "Log only non-sensitive error information (error codes, timestamps). Never log payment details, card info, or full error objects containing sensitive data."
+          },
+          {
+            "line": 28,
+            "severity": "high",
+            "category": "security",
+            "description": "Missing authentication and authorization - exported functions don't verify caller authorization, allowing any user to upgrade another user's subscription",
+            "suggestion": "Add authentication context parameter to verify the caller is authorized to perform operations on the specified userId."
+          },
+          {
+            "line": 65,
+            "severity": "high",
+            "category": "security",
+            "description": "Weak card validation - no Luhn algorithm check, accepts any 16-digit string, year parsing assumes 20XX (breaks in 2100), no card type detection",
+            "suggestion": "Implement Luhn algorithm for card validation or preferably use a PCI-compliant payment processor that handles validation."
+          },
+          {
+            "line": 138,
+            "severity": "high",
+            "category": "bug-risk",
+            "description": "Race condition - no transaction management. If chargeCard succeeds but upgradeUserSubscription fails, user is charged without getting subscription",
+            "suggestion": "Wrap payment and subscription operations in a database transaction to ensure atomicity."
+          },
+          {
+            "line": 41,
+            "severity": "high",
+            "category": "security",
+            "description": "No input validation on payment amount - allows negative amounts, extreme values, or NaN. Client-provided amount is trusted instead of server-calculated",
+            "suggestion": "Validate payment amount is positive, finite, and within reasonable bounds. Never trust client-provided amounts - always calculate server-side."
+          },
+          {
+            "line": 100,
+            "severity": "medium",
+            "category": "bug-risk",
+            "description": "Floating point arithmetic for money - can lead to rounding errors in financial calculations",
+            "suggestion": "Use integer cents for calculations or implement a Money class. Consider libraries like dinero.js for precise decimal arithmetic."
+          },
+          {
+            "line": 125,
+            "severity": "medium",
+            "category": "performance",
+            "description": "No error recovery or retry logic - transient network/database failures cause payment failures even with valid cards",
+            "suggestion": "Implement exponential backoff retry logic for transient errors with configurable retry attempts."
+          },
+          {
+            "line": 98,
+            "severity": "medium",
+            "category": "maintainability",
+            "description": "Hardcoded business logic - pricing, tax rates, fees, and features are hardcoded, requiring code deployment for changes",
+            "suggestion": "Move configuration to external config file or database for dynamic updates without deployment."
+          },
+          {
+            "line": 28,
+            "severity": "medium",
+            "category": "security",
+            "description": "Missing rate limiting - no protection against brute-force card attempts or repeated payment requests",
+            "suggestion": "Implement rate limiting (e.g., max 3 payment attempts per 15 minutes per user)."
+          },
+          {
+            "line": 28,
+            "severity": "medium",
+            "category": "bug-risk",
+            "description": "No idempotency - duplicate requests (network retry, double-click) could charge user twice",
+            "suggestion": "Add idempotency key parameter to prevent duplicate charges for the same request."
+          },
+          {
+            "line": 163,
+            "severity": "medium",
+            "category": "bug-risk",
+            "description": "Date comparison issue - doesn't account for timezones and uses '<' which may incorrectly deny access on expiration day",
+            "suggestion": "Use end-of-day for expiration checks and handle timezones properly."
+          },
+          {
+            "line": 168,
+            "severity": "medium",
+            "category": "bug-risk",
+            "description": "Unsafe JSON parsing - JSON.parse() without error handling could crash if database data is corrupted",
+            "suggestion": "Wrap JSON.parse in try-catch and validate parsed data is an array."
+          },
+          {
+            "line": 128,
+            "severity": "low",
+            "category": "maintainability",
+            "description": "Missing type safety - database query results typed as 'any', no type safety for database operations",
+            "suggestion": "Define TypeScript interfaces for database rows and use typed query methods."
+          },
+          {
+            "line": 70,
+            "severity": "low",
+            "category": "maintainability",
+            "description": "Magic numbers - values like 16, 3, 4, 2000 reduce code readability",
+            "suggestion": "Extract to named constants like CARD_NUMBER_LENGTH, CVV_LENGTH_STANDARD, etc."
+          },
+          {
+            "line": 37,
+            "severity": "low",
+            "category": "maintainability",
+            "description": "Inconsistent error handling - some functions throw errors, others return false, making API unpredictable",
+            "suggestion": "Use consistent error handling strategy with custom error classes for all failure scenarios."
+          },
+          {
+            "line": 28,
+            "severity": "low",
+            "category": "security",
+            "description": "No audit logging - critical payment/subscription operations lack audit trail for debugging and compliance",
+            "suggestion": "Add comprehensive logging for all payment and subscription operations with timestamps and user context."
+          },
+          {
+            "line": 67,
+            "severity": "low",
+            "category": "security",
+            "description": "Missing input sanitization - card number and CVV not checked for non-numeric characters",
+            "suggestion": "Sanitize inputs and validate only digits are present in card number and CVV."
+          },
+          {
+            "line": 1,
+            "severity": "low",
+            "category": "best-practice",
+            "description": "No unit tests - critical business logic for payment processing lacks any test coverage",
+            "suggestion": "Implement comprehensive test suite with unit and integration tests targeting 80%+ coverage."
+          },
+          {
+            "line": 28,
+            "severity": "info",
+            "category": "style",
+            "description": "Missing JSDoc parameters - comments exist but don't document parameters, return types, or exceptions",
+            "suggestion": "Add complete JSDoc with @param, @returns, @throws, and @example tags."
+          },
+          {
+            "line": 67,
+            "severity": "info",
+            "category": "bug-risk",
+            "description": "Missing null/undefined checks - no validation before accessing properties, could throw TypeError if payment object is malformed",
+            "suggestion": "Add null/undefined checks and type validation before accessing object properties."
+          },
+          {
+            "line": 11,
+            "severity": "info",
+            "category": "best-practice",
+            "description": "Consider using enums for tier - string literals could benefit from enum for better type safety",
+            "suggestion": "Define SubscriptionTier enum with FREE, PREMIUM, ENTERPRISE values."
+          },
+          {
+            "line": 10,
+            "severity": "info",
+            "category": "best-practice",
+            "description": "Database connection not managed - import doesn't show connection pooling or management",
+            "suggestion": "Consider using an ORM like Prisma, TypeORM, or Knex.js for better database management."
+          }
+        ],
+        "overallScore": 28,
+        "summary": "This file contains CRITICAL security vulnerabilities that make it unsuitable for production. The code directly handles plaintext credit card data (PCI-DSS violation), has a syntax error on line 48, lacks authentication/authorization, and has zero test coverage for critical payment processing logic. The floating-point arithmetic for money calculations and missing transaction management create significant financial risk."
+      },
+      "testCoverage": {
+        "file": "src/premium.ts",
+        "hasTests": false,
+        "testFiles": [],
+        "untestedPaths": [
+          {
+            "type": "function",
+            "location": "processPremiumPayment() - lines 28-56",
+            "priority": "critical",
+            "reasoning": "Main payment flow handles real money transactions with zero validation through tests. Errors could result in financial loss or charging customers incorrectly.",
+            "suggestedTest": "Test successful payment processing for both premium and enterprise tiers, invalid card number rejection, insufficient amount rejection, expired card handling, payment gateway failures, and database errors during subscription upgrade."
+          },
+          {
+            "type": "function",
+            "location": "chargeCard() - lines 126-136",
+            "priority": "critical",
+            "reasoning": "Payment gateway integration with no tests. Database insertion failures and network issues are untested.",
+            "suggestedTest": "Test successful card charge, database insertion failures, network timeout scenarios, payment gateway errors, and partial failure recovery with mocked database."
+          },
+          {
+            "type": "function",
+            "location": "calculateSubscriptionPrice() - lines 98-109",
+            "priority": "critical",
+            "reasoning": "Pricing calculation errors directly impact revenue. Tax and fee calculations use floating-point arithmetic which is error-prone.",
+            "suggestedTest": "Test premium tier pricing (9.99 + 8% tax + 2.9% fee = 11.08), enterprise tier pricing (49.99 + taxes/fees = 55.44), verify no floating-point rounding errors, test boundary amounts."
+          },
+          {
+            "type": "function",
+            "location": "validatePaymentDetails() - lines 65-91",
+            "priority": "high",
+            "reasoning": "Card validation is the first line of defense against invalid payments. Multiple edge cases need testing.",
+            "suggestedTest": "Test valid 16-digit cards, invalid lengths (<16, >16), 3-digit CVV (standard), 4-digit CVV (Amex), invalid CVV lengths, valid/invalid expiry formats (MM/YY), expired cards, cards expiring in current month, future dates, boundary dates (12/99, 01/00)."
+          },
+          {
+            "type": "function",
+            "location": "upgradeUserSubscription() - lines 138-147",
+            "priority": "high",
+            "reasoning": "Subscription upgrades assign features and calculate expiry dates. Incorrect feature assignment or date calculation impacts user experience.",
+            "suggestedTest": "Test premium tier gets correct 3 features, enterprise gets correct 5 features, subscription expiry is exactly 1 year from now, database upsert for existing subscriptions, JSON feature serialization correctness."
+          },
+          {
+            "type": "function",
+            "location": "hasFeatureAccess() - lines 157-169",
+            "priority": "high",
+            "reasoning": "Feature access control determines what premium features users can use. Errors could give free access or block paying customers.",
+            "suggestedTest": "Test valid subscription with feature access grants access, expired subscription denies access, non-existent subscription denies access, invalid feature names return false, JSON parsing errors are handled, subscription at exact expiry boundary."
+          },
+          {
+            "type": "function",
+            "location": "getUserSubscription() - lines 172-184",
+            "priority": "medium",
+            "reasoning": "Subscription retrieval is used throughout the app. Errors in date parsing or JSON deserialization could break functionality.",
+            "suggestedTest": "Test existing subscription retrieval returns correct data, non-existent user returns null, date parsing is correct, JSON deserialization works, malformed database data is handled gracefully."
+          },
+          {
+            "type": "edge-case",
+            "location": "Payment amount validation - line 41",
+            "priority": "critical",
+            "reasoning": "Client-provided amounts could be manipulated. Need to test negative amounts, zero, NaN, Infinity, amounts $0.01 below required.",
+            "suggestedTest": "Test payment $0.01 below required amount is rejected, negative amounts throw error, zero amount is rejected, NaN and Infinity are rejected, amount exactly matching required is accepted."
+          },
+          {
+            "type": "edge-case",
+            "location": "Concurrent payments - line 28",
+            "priority": "high",
+            "reasoning": "Race conditions in concurrent requests could cause double-charging or inconsistent subscription state.",
+            "suggestedTest": "Test two simultaneous payment requests for same user don't cause duplicate charges, database upsert correctly handles concurrent updates, transaction isolation prevents race conditions."
+          }
+        ],
+        "coverageEstimate": 0,
+        "summary": "CRITICAL: Zero test coverage for business-critical payment processing logic. No test files exist for this 190-line file containing financial transactions, card validation, pricing calculations, and subscription management. This represents severe risk for production deployment."
+      },
+      "refactorings": {
+        "file": "src/premium.ts",
+        "suggestions": [
+          {
+            "type": "pattern-improvement",
+            "location": "Lines 98-147 (database operations)",
+            "impact": "high",
+            "description": "Apply Repository Pattern to separate data access from business logic",
+            "before": "Direct database queries scattered throughout: await db.query(query, [userId, tier, validUntil, JSON.stringify(features)])",
+            "after": "Create SubscriptionRepository and PaymentRepository classes with methods like create(), findByUserId(), recordPayment() that encapsulate all database operations",
+            "benefits": "Separates data access concerns, makes code testable with dependency injection, centralizes queries for easier maintenance, follows Single Responsibility Principle"
+          },
+          {
+            "type": "pattern-improvement",
+            "location": "Lines 126-136 (payment processing)",
+            "impact": "high",
+            "description": "Apply Strategy Pattern for payment gateway abstraction",
+            "before": "Direct payment processing in chargeCard() function with hardcoded logic",
+            "after": "Create PaymentGateway interface with charge() method, implement StripePaymentGateway, PayPalGateway, etc. allowing easy switching between providers",
+            "benefits": "Enables multiple payment providers, better error handling with typed results, improved testability through interface abstraction, follows Open/Closed Principle"
+          },
+          {
+            "type": "extract-function",
+            "location": "Lines 65-91 (validation)",
+            "impact": "high",
+            "description": "Extract Value Objects for CardNumber, CVV, and ExpiryDate with built-in validation",
+            "before": "validatePaymentDetails() function with manual string checks",
+            "after": "Create CardNumber.create(), CVV.create(), ExpiryDate.create() that throw domain exceptions on invalid input, making invalid states unrepresentable",
+            "benefits": "Encapsulates validation within domain objects, fail-fast with immediate validation, type safety ensures valid data throughout application, eliminates separate validation function"
+          },
+          {
+            "type": "extract-function",
+            "location": "Lines 98-109 (pricing)",
+            "impact": "medium",
+            "description": "Extract PricingService with configurable rates",
+            "before": "Hardcoded pricing, tax rates, and fees in calculateSubscriptionPrice() function",
+            "after": "Create PricingService class with configurable PricingConfig, use Money value object to handle cents, add methods calculateTax() and calculateProcessingFee()",
+            "benefits": "Centralizes pricing configuration, eliminates floating-point precision issues with Money class, makes pricing testable and configurable per environment, explicit calculation methods"
+          },
+          {
+            "type": "extract-function",
+            "location": "Lines 28-56 (business logic)",
+            "impact": "high",
+            "description": "Create SubscriptionService class to centralize business logic following domain-driven design",
+            "before": "Procedural processPremiumPayment() function with mixed concerns",
+            "after": "SubscriptionService with upgradeToPremium(), hasFeatureAccess(), getActiveSubscription() methods, constructor-injected dependencies (repositories, payment gateway, pricing service)",
+            "benefits": "Centralizes business logic, clear dependency injection for testability, better error handling with custom exceptions, follows Single Responsibility Principle"
+          },
+          {
+            "type": "modernize",
+            "location": "Lines 8-20 (type definitions)",
+            "impact": "medium",
+            "description": "Use TypeScript enums and const assertions for better type safety",
+            "before": "String literal types: tier: 'free' | 'premium' | 'enterprise', features: string[]",
+            "after": "Create SubscriptionTier enum, SUBSCRIPTION_FEATURES const object with as const, use ReadonlyArray for immutability",
+            "benefits": "Compile-time type safety, autocomplete support, prevents typos in feature strings, better IDE support and refactoring"
+          },
+          {
+            "type": "pattern-improvement",
+            "location": "Throughout file (error handling)",
+            "impact": "medium",
+            "description": "Create domain-specific exception classes instead of generic Error",
+            "before": "throw new Error('Invalid payment details')",
+            "after": "Create PaymentError, InvalidCardNumberError, InvalidCVVError, ExpiredCardError, InsufficientPaymentError, PaymentFailedError exception hierarchy",
+            "benefits": "More specific error handling, better error tracking and logging, enables catching specific error types, clearer intent and debugging"
+          },
+          {
+            "type": "simplify",
+            "location": "Lines 70, 73, 86 (magic numbers)",
+            "impact": "low",
+            "description": "Extract magic numbers into named constants",
+            "before": "cardNumber.length !== 16, cvv.length !== 3 && cvv.length !== 4",
+            "after": "Create PAYMENT_CONSTANTS object with CARD_NUMBER_LENGTH: 16, CVV_LENGTH_STANDARD: 3, CVV_LENGTH_AMEX: 4, SUBSCRIPTION_DURATION_YEARS: 1",
+            "benefits": "Self-documenting code, single source of truth, easy to modify values, improved readability"
+          },
+          {
+            "type": "modernize",
+            "location": "Lines 28-51 (return types)",
+            "impact": "medium",
+            "description": "Replace boolean returns with Result discriminated union types",
+            "before": "Promise<boolean> return types lose error information",
+            "after": "Use Result<T, E> type: { success: true; value: T } | { success: false; error: E } for richer error details",
+            "benefits": "No silent failures, forces explicit error handling, type-safe error information, better debugging with detailed context"
+          },
+          {
+            "type": "pattern-improvement",
+            "location": "Line 134 (console.error)",
+            "impact": "medium",
+            "description": "Add Logger injection for better observability",
+            "before": "console.error('Payment failed:', error) directly in code",
+            "after": "Create Logger interface with info(), warn(), error(), debug() methods, inject ConsoleLogger or Winston/Pino implementation",
+            "benefits": "Testable logging (can mock in tests), consistent log format, easy to swap implementations, structured logging with context, better production observability"
+          }
+        ],
+        "summary": "The code needs significant architectural refactoring to separate concerns, improve testability, and follow SOLID principles. Key improvements include implementing Repository pattern for database access, Strategy pattern for payment processing, extracting Value Objects for validation, creating a dedicated SubscriptionService, and modernizing TypeScript usage with enums and proper error handling."
+      }
     }
-  },
+  ],
   "summary": {
-    "overallScore": 93,
-    "riskLevel": "LOW",
-    "keyFindingsCount": 3,
-    "filesReviewedCount": 2,
-    "totalFiles": 2,
-    "criticalIssues": 0,
-    "highPriorityTests": 1,
-    "refactoringOpportunities": 2
-  },
-  "codeQuality": {
-    "score": 93,
-    "issues": [
-      {
-        "id": "cq-global-1",
-        "severity": "medium",
-        "file": "src/server.js",
-        "line": 42,
-        "message": "Missing explicit global error handling middleware for unhandled promise rejections.",
-        "suggestion": "Implement centralized Express error-handling middleware at the app root level."
-      }
-    ],
-    "positiveHighlights": [
-      "Clean modular architecture with clear separation of business logic",
-      "Consistent use of asynchronous route handlers across all API endpoints"
-    ]
-  },
-  "testCoverage": {
-    "score": 89,
-    "missingTests": [
-      "Integration test for network failure simulation in data persistence layer",
-      "Unit test covering edge cases in task deletion parameters"
-    ],
-    "recommendations": [
-      "Expand unit test suite to cover all error exception branches and invalid payload schemas.",
-      "Add automated regression checks for recent PR modifications."
-    ]
-  },
-  "refactoring": {
-    "suggestions": [
-      {
-        "id": "ref-1",
-        "title": "Extract Request Validation",
-        "description": "Move inline payload validation into a dedicated middleware module.",
-        "file": "src/server.js",
-        "impact": "medium"
-      }
-    ]
+    "totalFiles": 1,
+    "overallScore": 28,
+    "criticalIssues": 4,
+    "highPriorityTests": 9,
+    "refactoringOpportunities": 10
   },
   "recommendations": [
     {
-      "id": "rec-1",
-      "title": "Implement Global Error Middleware",
-      "description": "Add robust global error handling middleware in src/server.js to prevent unhandled rejections from crashing the server.",
+      "priority": "critical",
+      "category": "Security & Compliance",
+      "description": "IMMEDIATE: Remove all plaintext credit card handling and integrate PCI-compliant payment processor (Stripe, PayPal, Square). Current implementation violates PCI-DSS and exposes application to severe legal and financial risks.",
+      "files": [
+        "src/premium.ts"
+      ]
+    },
+    {
+      "priority": "critical",
+      "category": "Bug Fix",
+      "description": "IMMEDIATE: Fix syntax error on line 48 ('const paymentSuccessful = await n false;'). This will crash the application and prevent deployment.",
+      "files": [
+        "src/premium.ts"
+      ]
+    },
+    {
+      "priority": "critical",
+      "category": "Testing",
+      "description": "URGENT: Implement comprehensive test suite for payment processing logic. Current 0% coverage on financial transactions is unacceptable for production. Target 80%+ coverage before deployment.",
+      "files": [
+        "src/premium.ts"
+      ]
+    },
+    {
+      "priority": "critical",
+      "category": "Data Integrity",
+      "description": "URGENT: Implement database transaction management to wrap payment charging and subscription upgrade in atomic operations. Current race condition risks charging users without granting subscriptions.",
+      "files": [
+        "src/premium.ts"
+      ]
+    },
+    {
       "priority": "high",
-      "category": "SECURITY",
+      "category": "Security",
+      "description": "Add authentication and authorization checks to all exported functions. Users should only be able to modify their own subscriptions.",
       "files": [
-        "src/server.js"
+        "src/premium.ts"
       ]
     },
     {
-      "id": "rec-2",
-      "title": "Expand Test Coverage for Failure States",
-      "description": "Add integration tests covering database timeout and invalid request payloads to ensure high regression safety.",
+      "priority": "high",
+      "category": "Security",
+      "description": "Implement input validation for all user-provided data including userId (UUID format), payment amounts (positive, finite, reasonable bounds), and feature names (whitelist).",
+      "files": [
+        "src/premium.ts"
+      ]
+    },
+    {
+      "priority": "high",
+      "category": "Security",
+      "description": "Remove sensitive data from error logs. Replace console.error with structured logging that excludes payment details, card information, and sensitive user data.",
+      "files": [
+        "src/premium.ts"
+      ]
+    },
+    {
+      "priority": "high",
+      "category": "Architecture",
+      "description": "Refactor to Repository pattern and Service layer architecture. Extract SubscriptionRepository, PaymentRepository, and SubscriptionService to separate data access from business logic.",
+      "files": [
+        "src/premium.ts"
+      ]
+    },
+    {
       "priority": "medium",
-      "category": "TESTING",
+      "category": "Financial Accuracy",
+      "description": "Replace floating-point money calculations with integer cents or use a decimal library (dinero.js) to avoid rounding errors in financial transactions.",
       "files": [
-        "tests/server.test.js",
-        "tests/todo.test.js"
+        "src/premium.ts"
       ]
     },
     {
-      "id": "rec-3",
-      "title": "Modularize Validation Logic",
-      "description": "Extract input validation checks into dedicated utility functions to improve code reusability.",
-      "priority": "low",
-      "category": "MAINTAINABILITY",
+      "priority": "medium",
+      "category": "Security",
+      "description": "Implement rate limiting on payment processing endpoints (e.g., max 3 attempts per 15 minutes per user) to prevent brute-force attacks and abuse.",
       "files": [
-        "src/server.js"
+        "src/premium.ts"
+      ]
+    },
+    {
+      "priority": "medium",
+      "category": "Reliability",
+      "description": "Add idempotency key support to prevent duplicate charges from network retries or user double-clicks. Store and check idempotency keys before processing payments.",
+      "files": [
+        "src/premium.ts"
+      ]
+    },
+    {
+      "priority": "medium",
+      "category": "Reliability",
+      "description": "Implement retry logic with exponential backoff for transient database and network failures during payment processing.",
+      "files": [
+        "src/premium.ts"
+      ]
+    },
+    {
+      "priority": "medium",
+      "category": "Maintainability",
+      "description": "Extract hardcoded business logic (pricing, tax rates, fees, features) to configuration files or database for dynamic updates without code deployment.",
+      "files": [
+        "src/premium.ts"
+      ]
+    },
+    {
+      "priority": "low",
+      "category": "Code Quality",
+      "description": "Add comprehensive JSDoc documentation with @param, @returns, @throws, and @example tags for all public functions.",
+      "files": [
+        "src/premium.ts"
+      ]
+    },
+    {
+      "priority": "low",
+      "category": "Type Safety",
+      "description": "Modernize TypeScript usage with enums for SubscriptionTier, const assertions for features, readonly modifiers, and typed database query results.",
+      "files": [
+        "src/premium.ts"
       ]
     }
   ],
-  "fileReviews": [
-    {
-      "file": "src/server.js",
-      "codeQuality": {
-        "file": "src/server.js",
-        "overallScore": 93,
-        "summary": "Core Express server and routing implementation for udacity/cd14715-simple-todo-app PR #3.",
-        "issues": [
-          {
-            "id": "cq-3-1",
-            "severity": "medium",
-            "file": "src/server.js",
-            "line": 42,
-            "message": "Missing explicit try/catch error handling around asynchronous database query middleware.",
-            "suggestion": "Wrap asynchronous route handlers in a centralized error-handling wrapper or try/catch blocks."
-          },
-          {
-            "id": "cq-3-2",
-            "severity": "low",
-            "file": "src/server.js",
-            "line": 88,
-            "message": "Hardcoded environment fallback port detected.",
-            "suggestion": "Use process.env.PORT with a strict configuration validator."
-          }
-        ],
-        "positiveHighlights": [
-          "Clean separation of concerns between routing and business logic",
-          "Consistent adherence to modern ES6+ asynchronous syntax"
-        ]
-      },
-      "testCoverage": {
-        "file": "src/server.js",
-        "hasTests": true,
-        "testFiles": [
-          "tests/server.test.js"
-        ],
-        "untestedPaths": [
-          {
-            "type": "branch",
-            "location": "src/server.js:55",
-            "priority": "high",
-            "reasoning": "Error propagation branch when database connection fails lacks unit test coverage.",
-            "suggestedTest": "Add integration test simulating database timeout and verify 500 status response."
-          }
-        ],
-        "coverageEstimate": 87,
-        "summary": "Good baseline coverage on positive request flows, but exception branches require testing.",
-        "missingTests": [
-          "Integration test for malformed JSON request bodies",
-          "Unit test for unhandled promise rejection middleware"
-        ],
-        "recommendations": [
-          "Add negative test cases for all API endpoint input validation checks."
-        ]
-      },
-      "refactorings": {
-        "file": "src/server.js",
-        "summary": "Identified opportunities to improve modularity and reduce callback nesting.",
-        "suggestions": [
-          {
-            "type": "extract-function",
-            "location": "src/server.js:24",
-            "description": "Extract request validation middleware into a dedicated validation utility file.",
-            "impact": "medium",
-            "before": "app.post(\"/todos\", (req, res) => { if (!req.body.task) return res.status(400)... })",
-            "after": "app.post(\"/todos\", validateTaskPayload, handleCreateTodo)",
-            "benefits": "Improves testability, readability, and separation of concerns."
-          }
-        ]
-      }
-    },
-    {
-      "file": "src/models/todo.js",
-      "codeQuality": {
-        "file": "src/models/todo.js",
-        "overallScore": 95,
-        "summary": "Data model persistence and storage layer for PR #3.",
-        "issues": [],
-        "positiveHighlights": [
-          "Efficient query structuring",
-          "Implements proper data sanitization before persistence"
-        ]
-      },
-      "testCoverage": {
-        "file": "src/models/todo.js",
-        "hasTests": true,
-        "testFiles": [
-          "tests/todo.test.js"
-        ],
-        "untestedPaths": [],
-        "coverageEstimate": 97,
-        "summary": "Excellent test coverage across model CRUD operations.",
-        "missingTests": [],
-        "recommendations": [
-          "Maintain current test suite rigor for future schema modifications."
-        ]
-      },
-      "refactorings": {
-        "file": "src/models/todo.js",
-        "summary": "Model implementation is clean and adheres to repository standards.",
-        "suggestions": [
-          {
-            "type": "modernize",
-            "location": "src/models/todo.js:15",
-            "description": "Utilize optional chaining for nested property lookups.",
-            "impact": "low",
-            "before": "if (data && data.item && data.item.id) { ... }",
-            "after": "if (data?.item?.id) { ... }",
-            "benefits": "Reduces boilerplate and increases readability."
-          }
-        ]
-      }
+  "metadata": {
+    "analyzedAt": "2026-10-15T00:00:00Z",
+    "duration": 45000,
+    "agentVersions": {
+      "code-quality-analyzer": "af2db66",
+      "test-coverage-analyzer": "ac7b6bb",
+      "refactoring-suggester": "aeb4b88"
     }
-  ]
+  }
 }

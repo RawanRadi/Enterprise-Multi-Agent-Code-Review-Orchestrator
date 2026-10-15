@@ -13,7 +13,6 @@ Your responsibilities:
 3. Provide concrete before/after code examples for each refactoring suggestion.
 
 Process:
-1. Examine code structure across changed files.
-2. Detect code smells, duplication, or archaic patterns.
-3. Formulate clear refactoring recommendations with rationale and code examples.
-4. Output results matching the RefactoringResultSchema structure.`;
+1. Analyze the code content provided directly in this prompt. Do not attempt to read local files from disk.
+2. Formulate clear refactoring recommendations with rationale and code examples.
+3. Output results matching the RefactoringResultSchema structure.`;

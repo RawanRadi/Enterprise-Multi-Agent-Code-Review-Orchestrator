@@ -4,60 +4,54 @@
 
 | Metric | Value |
 |--------|-------|
-| **Overall Score** | 83/100 |
-| **Files Reviewed** | 2 |
-| **Critical Issues** | 0 |
-| **High Priority Tests** | 1 |
-| **Refactoring Opportunities** | 2 |
+| **Overall Score** | 78/100 |
+| **Files Reviewed** | 1 |
+| **Critical Issues** | 2 |
+| **High Priority Tests** | 6 |
+| **Refactoring Opportunities** | 10 |
 
 ## 🎯 Top Recommendations
 
-1. ⚠️ **SECURITY**: Add robust global error handling middleware in src/server.js to prevent unhandled rejections from crashing the server.
-   - Files: src/server.js
+1. 🚨 **Security**: Upgrade XSS sanitization to use a proper library (DOMPurify) or at minimum add more escape characters including '&' and '/'. Current implementation only handles 4 characters and misses many XSS vectors.
+   - Files: fixtures/clean-code.ts
 
-2. 📝 **TESTING**: Add integration tests covering database timeout and invalid request payloads to ensure high regression safety.
-   - Files: tests/server.test.js, tests/todo.test.js
+2. 🚨 **Testing**: Implement comprehensive tests for security-critical functions isValidEmail() and sanitizeInput(). These functions have zero test coverage and handle user input validation and XSS prevention.
+   - Files: fixtures/clean-code.ts
 
-3. 💡 **MAINTAINABILITY**: Extract input validation checks into dedicated utility functions to improve code reusability.
-   - Files: src/server.js
+3. ⚠️ **Security**: Replace Math.random() based ID generation with crypto.randomUUID() for cryptographically secure IDs. Current implementation is predictable and vulnerable to enumeration attacks.
+   - Files: fixtures/clean-code.ts
+
+4. ⚠️ **Data Integrity**: Add duplicate email checking before user creation to prevent database constraint violations. Currently no check exists for existing users with the same email address.
+   - Files: fixtures/clean-code.ts
+
+5. ⚠️ **Testing**: Create tests for all validation branches in createUser() function including missing email, missing name, and invalid email format error paths. These are critical for preventing invalid data entry.
+   - Files: fixtures/clean-code.ts
 
 ## 📁 File Details
 
-### 📄 `src/server.js`
+### 📄 `fixtures/clean-code.ts`
 
-**Quality Score:** 83/100 | **Coverage:** ~77%
+**Quality Score:** 78/100 | **Coverage:** ~0%
 
-#### Issues (2)
-  - Line 42: `medium` undefined
-  - Line 88: `low` undefined
+#### Issues (15)
+  - Line 30: `medium` Weak email validation regex that is too permissive and doesn't validate against RFC 5322 standards. Allows invalid emails like 'a@b.c' or multiple consecutive dots.
+  - Line 37: `high` Incomplete XSS sanitization that only handles basic HTML entities but misses many XSS vectors including script event handlers, encoded characters, and doesn't handle context-specific escaping.
+  - Line 59: `low` Email input is validated but not sanitized before being stored, potentially allowing malicious content in email fields.
 
+  *...and 12 more*
 
-#### Test Gaps (1)
-  - `src/server.js:55` (high priority)
+#### Test Gaps (10)
+  - `isValidEmail (lines 29-32)` (critical priority)
+  - `sanitizeInput (lines 37-44)` (critical priority)
 
+  *...and 8 more*
 
-#### Refactoring Opportunities (1)
-  - **extract-function**: Extract request validation middleware into a dedicated validation utility file.
+#### Refactoring Opportunities (10)
+  - **extract-function**: Extract validation logic into a dedicated function for better separation of concerns and improved testability.
+  - **modernize**: Use crypto.randomUUID() for more secure and standard ID generation instead of Math.random().
 
-
----
-
-### 📄 `src/models/todo.js`
-
-**Quality Score:** 85/100 | **Coverage:** ~87%
-
-#### Issues (0)
-  None found
-
-
-#### Test Gaps (0)
-  None found
-
-
-#### Refactoring Opportunities (1)
-  - **modernize**: Utilize optional chaining for nested property lookups.
-
+  *...and 8 more*
 
 ---
 
-*Generated at 2026-10-15T18:23:01.047Z • Duration: 45ms*
+*Generated at 2026-10-15T00:00:00Z • Duration: 45000ms*

@@ -4,60 +4,54 @@
 
 | Metric | Value |
 |--------|-------|
-| **Overall Score** | 88/100 |
-| **Files Reviewed** | 2 |
-| **Critical Issues** | 0 |
-| **High Priority Tests** | 1 |
-| **Refactoring Opportunities** | 2 |
+| **Overall Score** | 15/100 |
+| **Files Reviewed** | 1 |
+| **Critical Issues** | 3 |
+| **High Priority Tests** | 6 |
+| **Refactoring Opportunities** | 7 |
 
 ## 🎯 Top Recommendations
 
-1. ⚠️ **SECURITY**: Add robust global error handling middleware in src/server.js to prevent unhandled rejections from crashing the server.
-   - Files: src/server.js
+1. 🚨 **Security**: Replace all SQL string concatenation/interpolation with parameterized queries immediately. All three functions (searchTodos, searchTodosByStatus, getTodosByUser) are vulnerable to SQL injection attacks.
+   - Files: src/todo.ts
 
-2. 📝 **TESTING**: Add integration tests covering database timeout and invalid request payloads to ensure high regression safety.
-   - Files: tests/server.test.js, tests/todo.test.js
+2. 🚨 **Testing**: Add comprehensive security tests to verify SQL injection protection. Test with malicious inputs like "'; DROP TABLE todos; --" and "' OR '1'='1" to ensure parameterized queries work correctly.
+   - Files: src/todo.ts
 
-3. 💡 **MAINTAINABILITY**: Extract input validation checks into dedicated utility functions to improve code reusability.
-   - Files: src/server.js
+3. ⚠️ **Type Safety**: Change searchTodosByStatus parameter type from string to boolean. The current implementation accepts any string value, which is type-unsafe and error-prone.
+   - Files: src/todo.ts
+
+4. ⚠️ **Input Validation**: Add input validation to all functions. Validate that keywords are not empty, user IDs match expected format (UUID), and implement length limits to prevent DoS attacks.
+   - Files: src/todo.ts
+
+5. ⚠️ **Testing**: Implement unit tests covering all edge cases: empty inputs, null values, special characters, non-existent users, and database errors. Target minimum 80% code coverage.
+   - Files: src/todo.ts
 
 ## 📁 File Details
 
-### 📄 `src/server.js`
+### 📄 `src/todo.ts`
 
-**Quality Score:** 88/100 | **Coverage:** ~82%
+**Quality Score:** 15/100 | **Coverage:** ~0%
 
-#### Issues (2)
-  - Line 42: `medium` undefined
-  - Line 88: `low` undefined
+#### Issues (10)
+  - Line 119: `critical` SQL injection vulnerability in searchTodos() - Direct string interpolation of user input into SQL query using template literals
+  - Line 131: `critical` SQL injection vulnerability in searchTodosByStatus() - Direct string concatenation of user input without validation or parameterization
+  - Line 143: `critical` SQL injection vulnerability in getTodosByUser() - Template literal with userId directly embedded in JOIN query
 
+  *...and 7 more*
 
-#### Test Gaps (1)
-  - `src/server.js:55` (high priority)
+#### Test Gaps (10)
+  - `searchTodos(keyword: string)` (critical priority)
+  - `searchTodos() - empty/null keyword` (critical priority)
 
+  *...and 8 more*
 
-#### Refactoring Opportunities (1)
-  - **extract-function**: Extract request validation middleware into a dedicated validation utility file.
+#### Refactoring Opportunities (7)
+  - **pattern-improvement**: Replace SQL string interpolation with parameterized queries to prevent SQL injection
+  - **pattern-improvement**: Replace string concatenation with parameterized query and fix parameter type
 
-
----
-
-### 📄 `src/models/todo.js`
-
-**Quality Score:** 90/100 | **Coverage:** ~92%
-
-#### Issues (0)
-  None found
-
-
-#### Test Gaps (0)
-  None found
-
-
-#### Refactoring Opportunities (1)
-  - **modernize**: Utilize optional chaining for nested property lookups.
-
+  *...and 5 more*
 
 ---
 
-*Generated at 2026-10-15T18:26:45.542Z • Duration: 45ms*
+*Generated at 2026-10-15T00:00:00Z • Duration: 45ms*

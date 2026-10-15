@@ -47,50 +47,62 @@
   
   <div class="summary">
     <div class="metric">
-      <div class="metric-value">83</div>
+      <div class="metric-value">78</div>
       <div class="metric-label">Overall Score</div>
     </div>
     <div class="metric">
-      <div class="metric-value">2</div>
+      <div class="metric-value">1</div>
       <div class="metric-label">Files Reviewed</div>
     </div>
     <div class="metric">
-      <div class="metric-value">0</div>
+      <div class="metric-value">2</div>
       <div class="metric-label">Critical Issues</div>
     </div>
     <div class="metric">
-      <div class="metric-value">1</div>
+      <div class="metric-value">6</div>
       <div class="metric-label">Tests Needed</div>
     </div>
     <div class="metric">
-      <div class="metric-value">2</div>
+      <div class="metric-value">10</div>
       <div class="metric-label">Refactorings</div>
     </div>
   </div>
 
   <h2>🎯 Top Recommendations</h2>
   <ul>
+      <li class="rec-critical">
+        <span class="priority">[CRITICAL]</span>
+        <strong>Security</strong>: Upgrade XSS sanitization to use a proper library (DOMPurify) or at minimum add more escape characters including '&' and '/'. Current implementation only handles 4 characters and misses many XSS vectors.
+        <br><small>Files: fixtures/clean-code.ts</small>
+      </li>
+    
+      <li class="rec-critical">
+        <span class="priority">[CRITICAL]</span>
+        <strong>Testing</strong>: Implement comprehensive tests for security-critical functions isValidEmail() and sanitizeInput(). These functions have zero test coverage and handle user input validation and XSS prevention.
+        <br><small>Files: fixtures/clean-code.ts</small>
+      </li>
+    
       <li class="rec-high">
         <span class="priority">[HIGH]</span>
-        <strong>SECURITY</strong>: Add robust global error handling middleware in src/server.js to prevent unhandled rejections from crashing the server.
-        <br><small>Files: src/server.js</small>
+        <strong>Security</strong>: Replace Math.random() based ID generation with crypto.randomUUID() for cryptographically secure IDs. Current implementation is predictable and vulnerable to enumeration attacks.
+        <br><small>Files: fixtures/clean-code.ts</small>
       </li>
     
-      <li class="rec-medium">
-        <span class="priority">[MEDIUM]</span>
-        <strong>TESTING</strong>: Add integration tests covering database timeout and invalid request payloads to ensure high regression safety.
-        <br><small>Files: tests/server.test.js, tests/todo.test.js</small>
+      <li class="rec-high">
+        <span class="priority">[HIGH]</span>
+        <strong>Data Integrity</strong>: Add duplicate email checking before user creation to prevent database constraint violations. Currently no check exists for existing users with the same email address.
+        <br><small>Files: fixtures/clean-code.ts</small>
       </li>
     
-      <li class="rec-low">
-        <span class="priority">[LOW]</span>
-        <strong>MAINTAINABILITY</strong>: Extract input validation checks into dedicated utility functions to improve code reusability.
-        <br><small>Files: src/server.js</small>
+      <li class="rec-high">
+        <span class="priority">[HIGH]</span>
+        <strong>Testing</strong>: Create tests for all validation branches in createUser() function including missing email, missing name, and invalid email format error paths. These are critical for preventing invalid data entry.
+        <br><small>Files: fixtures/clean-code.ts</small>
       </li>
     </ul>
 
   <footer>
-    Generated at 2026-10-15T18:23:01.047Z • Duration: 45ms
+    Generated at 2026-10-15T00:00:00Z • Duration: 45000ms
   </footer>
 </body>
 </html>

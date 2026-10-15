@@ -47,50 +47,62 @@
   
   <div class="summary">
     <div class="metric">
-      <div class="metric-value">88</div>
+      <div class="metric-value">15</div>
       <div class="metric-label">Overall Score</div>
     </div>
     <div class="metric">
-      <div class="metric-value">2</div>
+      <div class="metric-value">1</div>
       <div class="metric-label">Files Reviewed</div>
     </div>
     <div class="metric">
-      <div class="metric-value">0</div>
+      <div class="metric-value">3</div>
       <div class="metric-label">Critical Issues</div>
     </div>
     <div class="metric">
-      <div class="metric-value">1</div>
+      <div class="metric-value">6</div>
       <div class="metric-label">Tests Needed</div>
     </div>
     <div class="metric">
-      <div class="metric-value">2</div>
+      <div class="metric-value">7</div>
       <div class="metric-label">Refactorings</div>
     </div>
   </div>
 
   <h2>🎯 Top Recommendations</h2>
   <ul>
+      <li class="rec-critical">
+        <span class="priority">[CRITICAL]</span>
+        <strong>Security</strong>: Replace all SQL string concatenation/interpolation with parameterized queries immediately. All three functions (searchTodos, searchTodosByStatus, getTodosByUser) are vulnerable to SQL injection attacks.
+        <br><small>Files: src/todo.ts</small>
+      </li>
+    
+      <li class="rec-critical">
+        <span class="priority">[CRITICAL]</span>
+        <strong>Testing</strong>: Add comprehensive security tests to verify SQL injection protection. Test with malicious inputs like "'; DROP TABLE todos; --" and "' OR '1'='1" to ensure parameterized queries work correctly.
+        <br><small>Files: src/todo.ts</small>
+      </li>
+    
       <li class="rec-high">
         <span class="priority">[HIGH]</span>
-        <strong>SECURITY</strong>: Add robust global error handling middleware in src/server.js to prevent unhandled rejections from crashing the server.
-        <br><small>Files: src/server.js</small>
+        <strong>Type Safety</strong>: Change searchTodosByStatus parameter type from string to boolean. The current implementation accepts any string value, which is type-unsafe and error-prone.
+        <br><small>Files: src/todo.ts</small>
       </li>
     
-      <li class="rec-medium">
-        <span class="priority">[MEDIUM]</span>
-        <strong>TESTING</strong>: Add integration tests covering database timeout and invalid request payloads to ensure high regression safety.
-        <br><small>Files: tests/server.test.js, tests/todo.test.js</small>
+      <li class="rec-high">
+        <span class="priority">[HIGH]</span>
+        <strong>Input Validation</strong>: Add input validation to all functions. Validate that keywords are not empty, user IDs match expected format (UUID), and implement length limits to prevent DoS attacks.
+        <br><small>Files: src/todo.ts</small>
       </li>
     
-      <li class="rec-low">
-        <span class="priority">[LOW]</span>
-        <strong>MAINTAINABILITY</strong>: Extract input validation checks into dedicated utility functions to improve code reusability.
-        <br><small>Files: src/server.js</small>
+      <li class="rec-high">
+        <span class="priority">[HIGH]</span>
+        <strong>Testing</strong>: Implement unit tests covering all edge cases: empty inputs, null values, special characters, non-existent users, and database errors. Target minimum 80% code coverage.
+        <br><small>Files: src/todo.ts</small>
       </li>
     </ul>
 
   <footer>
-    Generated at 2026-10-15T18:26:45.542Z • Duration: 45ms
+    Generated at 2026-10-15T00:00:00Z • Duration: 45ms
   </footer>
 </body>
 </html>

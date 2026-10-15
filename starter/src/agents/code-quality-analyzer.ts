@@ -19,5 +19,5 @@ export const codeQualityAnalyzer: AgentDefinition = {
   model: 'inherit',
   
   // Restricted toolset: File inspection tools + Skill execution tool
-  tools: ['Read', 'Grep', 'Glob', 'Skill'],
+  tools: ['Skill'],
 };

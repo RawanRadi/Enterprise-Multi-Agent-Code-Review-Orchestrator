@@ -1,16 +1,3 @@
-/**
- * Model Context Protocol (MCP) server configurations
- *
- * Required MCP Servers:
- * 1. GitHub - For PR/repo operations
- * 2. ESLint - For code linting and style analysis
- *
- * Documentation:
- * - MCP Protocol: https://modelcontextprotocol.io
- * - GitHub MCP: https://github.com/github/github-mcp-server
- * - ESLint MCP: https://eslint.org/docs/latest/use/mcp
- */
-
 export const mcpServersConfig = {
   /**
    * GitHub MCP Server
@@ -19,7 +6,7 @@ export const mcpServersConfig = {
   github: {
     type: 'stdio' as const,
     command: 'npx',
-    args: ['-y', '@modelcontextprotocol/server-github'],
+    args: ['--offline', '-y', '@modelcontextprotocol/server-github'],
     env: {
       GITHUB_PERSONAL_ACCESS_TOKEN: process.env.GITHUB_TOKEN || '',
     },
@@ -32,7 +19,7 @@ export const mcpServersConfig = {
   eslint: {
     type: 'stdio' as const,
     command: 'npx',
-    args: ['-y', '@eslint/mcp@latest'],
+    args: ['--offline', '-y', '@eslint/mcp'],
     env: {},
   },
 };
